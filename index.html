@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AB Bets Calculator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #0077cc;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .day {
+            margin: 15px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f7f7f7;
+        }
+        .radio-group {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 10px;
+        }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            background-color: #f0f0f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+        .radio-group label:hover {
+            background-color: #e6f7ff;
+            border-color: #0077cc;
+        }
+        .radio-group input[type="radio"] {
+            display: none;
+        }
+        .radio-group input[type="radio"]:checked + label {
+            background-color: #0077cc;
+            color: white;
+            border-color: #005fa3;
+        }
+        input[type="number"] {
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #0077cc;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #005fa3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e6f7ff;
+            border: 1px solid #0077cc;
+            border-radius: 8px;
+            font-size: 18px;
+            text-align: center;
+            color: #005fa3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AB Bets Calculator</h1>
+
+        <form id="betsForm">
+            <label for="days">Enter results and bets for each day:</label>
+
+            <!-- Days of the week -->
+            <div id="daysContainer">
+                <script>
+                    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+                    days.forEach(day => {
+                        document.write(`
+                            <div class="day">
+                                <label>${day}:</label>
+                                <div class="radio-group">
+                                    <input type="radio" id="${day.toLowerCase()}Hit" name="${day.toLowerCase()}" value="hit">
+                                    <label for="${day.toLowerCase()}Hit">Hit</label>
+                                    <input type="radio" id="${day.toLowerCase()}Miss" name="${day.toLowerCase()}" value="miss">
+                                    <label for="${day.toLowerCase()}Miss">Miss</label>
+                                    <input type="radio" id="${day.toLowerCase()}None" name="${day.toLowerCase()}" value="none" checked>
+                                    <label for="${day.toLowerCase()}None">No Bet</label>
+                                </div>
+                                <input type="number" id="${day.toLowerCase()}Bet" placeholder="Amount Bet">
+                                <input type="number" id="${day.toLowerCase()}Return" placeholder="Amount Returned">
+                            </div>
+                        `);
+                    });
+                </script>
+            </div>
+
+            <button type="button" onclick="calculateResults()">Calculate Results</button>
+        </form>
+
+        <div class="result" id="hitRateResult">Hit Rate: </div>
+        <div class="result" id="totalProfitResult">Total Profit: </div>
+    </div>
+
+    <script>
+        function calculateResults() {
+            const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+            let hits = 0;
+            let totalBets = 0;
+            let totalBetAmount = 0;
+            let totalReturnAmount = 0;
+
+            days.forEach(day => {
+                const radios = document.getElementsByName(day);
+                const bet = parseFloat(document.getElementById(`${day}Bet`).value) || 0;
+                const returned = parseFloat(document.getElementById(`${day}Return`).value) || 0;
+
+                totalBetAmount += bet;
+                totalReturnAmount += returned;
+
+                radios.forEach(radio => {
+                    if (radio.checked) {
+                        if (radio.value === "hit") {
+                            hits++;
+                            totalBets++;
+                        } else if (radio.value === "miss") {
+                            totalBets++;
+                        }
+                    }
+                });
+            });
+
+            const hitRate = totalBets > 0 ? (hits / totalBets) * 100 : 0;
+            const totalProfit = totalReturnAmount - totalBetAmount;
+
+            document.getElementById("hitRateResult").textContent = `Hit Rate: ${hitRate.toFixed(2)}%`;
+            document.getElementById("totalProfitResult").textContent = `Total Profit: $${totalProfit.toFixed(2)}`;
+        }
+    </script>
+</body>
+</html>
